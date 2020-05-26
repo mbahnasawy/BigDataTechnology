@@ -1,5 +1,6 @@
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericData;
@@ -17,6 +18,7 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Reducer;
+import org.apache.hadoop.mapreduce.Mapper.Context;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.util.Tool;
@@ -30,8 +32,10 @@ public class AvroMaxTempYear extends Configured implements Tool
 	public static class AvroMapper extends Mapper<LongWritable, Text, AvroKey<GenericRecord>, NullWritable>
 	{
 		private NcdcLineReaderUtils utils = new NcdcLineReaderUtils();
-		private GenericRecord record = new GenericData.Record(SCHEMA);
-		AvroKey<GenericRecord> avroKey = new AvroKey<GenericRecord>(record);
+		
+		
+		HashMap< Integer, Float> maxMap = new HashMap<Integer, Float>();
+		HashMap< Integer,  AvroKey<GenericRecord>> recordMap = new HashMap<Integer,  AvroKey<GenericRecord>>();
 
 		@Override
 		protected void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException
@@ -40,16 +44,40 @@ public class AvroMaxTempYear extends Configured implements Tool
 
 			if (utils.isValidTemperature())
 			{
+				GenericRecord record = new GenericData.Record(SCHEMA);
 				record.put("stationId", utils.getStationId());
 				record.put("temperature", utils.getAirTemperature());
 				record.put("year", utils.getYearInt());
 				
 				//populate the avroKey with record
+				AvroKey<GenericRecord> avroKey = new AvroKey<GenericRecord>(record);
 				avroKey.datum(record);
 				
-				context.write(avroKey, NullWritable.get());
+				if(maxMap.containsKey(utils.getYearInt())) {
+					if(maxMap.get(utils.getYearInt()) < utils.getAirTemperature()) {
+						maxMap.put(utils.getYearInt(), utils.getAirTemperature()) ; // update the value
+						recordMap.put(utils.getYearInt(), avroKey);
+					}
+					
+				}else {
+					maxMap.put(utils.getYearInt(), utils.getAirTemperature()) ; // update the value
+					recordMap.put(utils.getYearInt(), avroKey);
+				}
+				
+				
 			}
 		}
+		
+		@Override
+		public void cleanup(Context context) throws IOException, InterruptedException {
+				
+			for(Integer key: recordMap.keySet()){
+				
+				context.write(recordMap.get(key), NullWritable.get());
+			}
+		}
+		
+		
 	}
 
 	public static class AvroReducer extends Reducer<AvroKey<GenericRecord>, NullWritable, AvroKey<GenericRecord>, NullWritable>
