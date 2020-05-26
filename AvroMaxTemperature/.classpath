@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" output="target/classes" path="src/main/java">
+		<attributes>
+			<attribute name="optional" value="true"/>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry excluding="**" kind="src" output="target/classes" path="src/main/resources">
+		<attributes>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="src" output="target/test-classes" path="src/test/java">
+		<attributes>
+			<attribute name="test" value="true"/>
+			<attribute name="optional" value="true"/>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry excluding="**" kind="src" output="target/test-classes" path="src/test/resources">
+		<attributes>
+			<attribute name="test" value="true"/>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER">
+		<attributes>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8">
+		<attributes>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="libs/avro/avro-1.7.6-cdh5.13.0.jar"/>
+	<classpathentry kind="lib" path="libs/avro/avro-compiler-1.7.6-cdh5.13.0.jar"/>
+	<classpathentry kind="lib" path="libs/avro/avro-compiler.jar"/>
+	<classpathentry kind="lib" path="libs/avro/avro-ipc-1.7.6-cdh5.13.0-tests.jar"/>
+	<classpathentry kind="lib" path="libs/avro/avro-ipc-1.7.6-cdh5.13.0.jar"/>
+	<classpathentry kind="lib" path="libs/avro/avro-ipc-tests.jar"/>
+	<classpathentry kind="lib" path="libs/avro/avro-ipc.jar"/>
+	<classpathentry kind="lib" path="libs/avro/avro-mapred-1.7.6-cdh5.13.0-hadoop2.jar"/>
+	<classpathentry kind="lib" path="libs/avro/avro-mapred-1.7.6-cdh5.13.0.jar"/>
+	<classpathentry kind="lib" path="libs/avro/avro-mapred-hadoop2.jar"/>
+	<classpathentry kind="lib" path="libs/avro/avro-mapred.jar"/>
+	<classpathentry kind="lib" path="libs/avro/avro-maven-plugin-1.7.6-cdh5.13.0.jar"/>
+	<classpathentry kind="lib" path="libs/avro/avro-maven-plugin.jar"/>
+	<classpathentry kind="lib" path="libs/avro/avro-protobuf-1.7.6-cdh5.13.0.jar"/>
+	<classpathentry kind="lib" path="libs/avro/avro-protobuf.jar"/>
+	<classpathentry kind="lib" path="libs/avro/avro-service-archetype-1.7.6-cdh5.13.0.jar"/>
+	<classpathentry kind="lib" path="libs/avro/avro-service-archetype.jar"/>
+	<classpathentry kind="lib" path="libs/avro/avro-thrift-1.7.6-cdh5.13.0.jar"/>
+	<classpathentry kind="lib" path="libs/avro/avro-thrift.jar"/>
+	<classpathentry kind="lib" path="libs/avro/avro-tools-1.7.6-cdh5.13.0-nodeps.jar"/>
+	<classpathentry kind="lib" path="libs/avro/avro-tools-1.7.6-cdh5.13.0.jar"/>
+	<classpathentry kind="lib" path="libs/avro/avro-tools-nodeps.jar"/>
+	<classpathentry kind="lib" path="libs/avro/avro-tools.jar"/>
+	<classpathentry kind="lib" path="libs/avro/avro.jar"/>
+	<classpathentry kind="lib" path="libs/avro/trevni-avro-1.7.6-cdh5.13.0-hadoop2.jar"/>
+	<classpathentry kind="lib" path="libs/avro/trevni-avro-1.7.6-cdh5.13.0.jar"/>
+	<classpathentry kind="lib" path="libs/avro/trevni-avro-hadoop2.jar"/>
+	<classpathentry kind="lib" path="libs/avro/trevni-avro.jar"/>
+	<classpathentry kind="lib" path="libs/avro/trevni-core-1.7.6-cdh5.13.0.jar"/>
+	<classpathentry kind="lib" path="libs/avro/trevni-core.jar"/>
+	<classpathentry kind="output" path="target/classes"/>
+</classpath>
