@@ -63,6 +63,7 @@ public class NCDCFormatter extends Configured implements Tool
 			 }
 		 }
 		 
+		 
 		System.exit(res);
 	}
 
