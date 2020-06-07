@@ -23,8 +23,6 @@ public class SparkApacheLog
              "\\[([\\w:/]+\\s[+\\-]\\d{4})\\] \"(\\S+)" +  
              " (\\S+)\\s*(\\S+)?\\s*\" (\\d{3}) (\\S+)"; 
 	 
-	public static final String logEntryLine = "67.131.107.5 - - [12/Mar/2004:11:39:31 -0800] \"GET /twiki/pub/TWiki/TWikiLogos/twikiRobot46x50.gif HTTP/1.1\" 200 2877" ;
-	
 	public static void listIPsThatAccessMoreThan(String logFolder, int threshold, String outputFolder) {
 		JavaSparkContext sc = new JavaSparkContext(new SparkConf().setAppName("ApacheLog").setMaster("local"));
 
@@ -76,9 +74,7 @@ public class SparkApacheLog
 		 if (!matcher.matches() || NUM_FIELDS != matcher.groupCount()) {
 			     return false; 
 		}else {
-		//	System.out.println("Error: " + matcher.group(8));
-			//System.out.println("Date: "  + matcher.group(4).substring(0, 11));
-			
+	
 			if(matcher.group(8).equals(error) && isInRange(matcher.group(4).substring(0, 11), from, to)) {
 				return true;
 			}
@@ -109,25 +105,19 @@ public class SparkApacheLog
 	private static boolean isInRange(String target, String from, String to ) {
 		DateFormat df = new SimpleDateFormat("dd/MMM/yyyy");
 		
-		//System.out.println("In Range call");
 	     try
 	       {
-	           //format() method Formats a Date into a date/time string. 
 	           Date fromDate = df.parse(from);
 	           Date toDate = df.parse(to);
 	           Date targetDate = df.parse(target);
 	           
-	          // System.out.println("From: "+targetDate.compareTo(fromDate) + " To: " + targetDate.compareTo(toDate));
-	           
 	           if(targetDate.compareTo(fromDate)>=0  && targetDate.compareTo(toDate)<=0 ){
-	        	   //System.out.println("In");
 	        	   return true;
 	           }
 	
 
 	       }
 	       catch (Exception ex ){
-	    	  // System.out.println("Catch");
 	          return false;
 	       }
 	     
@@ -155,28 +145,29 @@ public class SparkApacheLog
 		
 		// Q2- list all IPs that access this server more than 20 times
 		listIPsThatAccessMoreThan(inputFolder, threshold, outputFolder2);
-		
-
-		/*
-		 Pattern p = Pattern.compile(LOG_PATTERN);
-		 Matcher matcher = p.matcher(logEntryLine);
-		
-		    System.out.println("Match count: " + matcher.groupCount());
-		if (!matcher.matches() || 
-			      NUM_FIELDS != matcher.groupCount()) {
-			      System.err.println("Bad log entry (or problem with RE?):");
-			      System.err.println(logEntryLine);
-			      return;
-			    }
-			    System.out.println("IP Address: " + matcher.group(1));
-			    System.out.println("Date&Time: " + matcher.group(4));
-			    System.out.println("Request: " + matcher.group(5));
-			    System.out.println("Response: " + matcher.group(6));
-			    System.out.println("Bytes Sent: " + matcher.group(7));
-			    if (!matcher.group(8).equals("-"))
-			      System.out.println("Referer: " + matcher.group(8));
-			    System.out.println("Browser: " + matcher.group(9));
-	
-		*/
+			
 	}
+	
+	
+	/*
+	 Pattern p = Pattern.compile(LOG_PATTERN);
+	 Matcher matcher = p.matcher(logEntryLine);
+	
+	    System.out.println("Match count: " + matcher.groupCount());
+	if (!matcher.matches() || 
+		      NUM_FIELDS != matcher.groupCount()) {
+		      System.err.println("Bad log entry (or problem with RE?):");
+		      System.err.println(logEntryLine);
+		      return;
+		    }
+		    System.out.println("IP Address: " + matcher.group(1));
+		    System.out.println("Date&Time: " + matcher.group(4));
+		    System.out.println("Request: " + matcher.group(5));
+		    System.out.println("Response: " + matcher.group(6));
+		    System.out.println("Bytes Sent: " + matcher.group(7));
+		    if (!matcher.group(8).equals("-"))
+		      System.out.println("Referer: " + matcher.group(8));
+		    System.out.println("Browser: " + matcher.group(9));
+
+	*/
 }
