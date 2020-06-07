@@ -1,8 +1,5 @@
 package cs523;
 
-import java.util.Arrays;
-
-import org.apache.commons.lang.StringUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
@@ -22,10 +19,11 @@ public class SparkApacheLog
 
 	/** The number of fields that must be found. */
 	public static final int NUM_FIELDS = 9;
-	
-	public static final String LOG_PATTERN = "^([\\d.]+) (\\S+) (\\S+) \\[([\\w:/]+\\s[+\\-]\\d{4})\\] \"(.+?)\" (\\d{3}) (\\d+) \"([^\"]+)\" \"([^\"]+)\"";
-
-	public static final String logEntryLine = "123.45.67.89 - - [27/Oct/2000:09:27:09 -0400] \"GET /java/javaResources.html HTTP/1.0\" 200 10450 \"-\" \"Mozilla/4.6 [en] (X11; U; OpenBSD 2.8 i386; Nav)\"";
+	public static final String LOG_PATTERN = "^(\\S+) (\\S+) (\\S+) " +  
+             "\\[([\\w:/]+\\s[+\\-]\\d{4})\\] \"(\\S+)" +  
+             " (\\S+)\\s*(\\S+)?\\s*\" (\\d{3}) (\\S+)"; 
+	 
+	public static final String logEntryLine = "67.131.107.5 - - [12/Mar/2004:11:39:31 -0800] \"GET /twiki/pub/TWiki/TWikiLogos/twikiRobot46x50.gif HTTP/1.1\" 200 2877" ;
 	
 	public static void listIPsThatAccessMoreThan(String logFolder, int threshold, String outputFolder) {
 		JavaSparkContext sc = new JavaSparkContext(new SparkConf().setAppName("ApacheLog").setMaster("local"));
@@ -38,7 +36,8 @@ public class SparkApacheLog
 				.map(l -> getIP(l))
 				.mapToPair(ip -> new Tuple2<String, Integer>(ip, 1))
 				.reduceByKey((x, y) -> x + y)
-				.filter(t -> t._2 >= threshold); 
+				.filter(t -> t._2 >= threshold);
+		
 		
 		ips.saveAsTextFile(outputFolder);
 		
@@ -77,7 +76,10 @@ public class SparkApacheLog
 		 if (!matcher.matches() || NUM_FIELDS != matcher.groupCount()) {
 			     return false; 
 		}else {
-			if(matcher.group(1) == error && isInRange(matcher.group(4).substring(0, 11), from, to)) {
+		//	System.out.println("Error: " + matcher.group(8));
+			//System.out.println("Date: "  + matcher.group(4).substring(0, 11));
+			
+			if(matcher.group(8).equals(error) && isInRange(matcher.group(4).substring(0, 11), from, to)) {
 				return true;
 			}
 		}
@@ -100,12 +102,14 @@ public class SparkApacheLog
 	private static String getIP(String log) {
 		Pattern p = Pattern.compile(LOG_PATTERN);
 		Matcher matcher = p.matcher(log);
+		matcher.matches();
 		return matcher.group(1); 
 	}
 	
 	private static boolean isInRange(String target, String from, String to ) {
 		DateFormat df = new SimpleDateFormat("dd/MMM/yyyy");
 		
+		//System.out.println("In Range call");
 	     try
 	       {
 	           //format() method Formats a Date into a date/time string. 
@@ -113,13 +117,17 @@ public class SparkApacheLog
 	           Date toDate = df.parse(to);
 	           Date targetDate = df.parse(target);
 	           
+	          // System.out.println("From: "+targetDate.compareTo(fromDate) + " To: " + targetDate.compareTo(toDate));
+	           
 	           if(targetDate.compareTo(fromDate)>=0  && targetDate.compareTo(toDate)<=0 ){
+	        	   //System.out.println("In");
 	        	   return true;
 	           }
 	
 
 	       }
 	       catch (Exception ex ){
+	    	  // System.out.println("Catch");
 	          return false;
 	       }
 	     
@@ -136,19 +144,39 @@ public class SparkApacheLog
 		String from = args[4];
 		String to = args[5];
 		
-		String threshold = args[6];
+		int threshold = Integer.parseInt(args[6]);
 		
 		FileSystem fs = FileSystem.get(new Configuration());
 		fs.delete(new Path(outputFolder1), true);
 		fs.delete(new Path(outputFolder2), true);
 		
-		// Q1 - How many 401 errors from 10/Mar/2004 to 08/Mar/2004
+		// Q1 - How many 401 errors from 07/Mar/2004 to 10/Mar/2004
 		howManyErrorsBetween(inputFolder, error, from, to, outputFolder1);
 		
 		// Q2- list all IPs that access this server more than 20 times
-		listIPsThatAccessMoreThan(inputFolder, Integer.parseInt(threshold), outputFolder2);
+		listIPsThatAccessMoreThan(inputFolder, threshold, outputFolder2);
 		
+
+		/*
+		 Pattern p = Pattern.compile(LOG_PATTERN);
+		 Matcher matcher = p.matcher(logEntryLine);
+		
+		    System.out.println("Match count: " + matcher.groupCount());
+		if (!matcher.matches() || 
+			      NUM_FIELDS != matcher.groupCount()) {
+			      System.err.println("Bad log entry (or problem with RE?):");
+			      System.err.println(logEntryLine);
+			      return;
+			    }
+			    System.out.println("IP Address: " + matcher.group(1));
+			    System.out.println("Date&Time: " + matcher.group(4));
+			    System.out.println("Request: " + matcher.group(5));
+			    System.out.println("Response: " + matcher.group(6));
+			    System.out.println("Bytes Sent: " + matcher.group(7));
+			    if (!matcher.group(8).equals("-"))
+			      System.out.println("Referer: " + matcher.group(8));
+			    System.out.println("Browser: " + matcher.group(9));
 	
-		
+		*/
 	}
 }
